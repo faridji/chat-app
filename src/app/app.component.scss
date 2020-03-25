@@ -1,0 +1,32 @@
+.message-container
+{
+    border: 1px solid #ddd;
+    box-shadow: 1px 3px 5px rgba(0,0,0,0.05);
+    border-radius: 2px;
+    background: #f9f9f9;
+
+    padding: 20px;
+}
+
+.chat
+{
+    height: 400px;
+    min-height: 400px;
+    display: unset !important;
+    overflow: auto;
+    margin-bottom: 20px;
+
+    .chat-list
+    {
+        padding: 14px 0px;
+        margin: 0 20px;
+        border-bottom: 1px solid #e9e9e9;
+        color: #555;
+    }
+
+    .message-sender
+    {
+        font-weight: bold; 
+        color: #575ed8;
+    }
+}

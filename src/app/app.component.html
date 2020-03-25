@@ -1,0 +1,41 @@
+<div fxFlex="100" fxLayout="row wrap">
+
+    <h1 fxFlex="100" fxLayoutAlign="center">{{ title }}</h1>
+
+    <div fxFlex="100" fxLayout="row wrap" fxLayoutAlign="space-around center" >
+        
+        <div fxFlex="50" fxLayout="row wrap" class="message-container">
+
+            <div class="chat" fxFlex="100" fxLayout="row wrap">
+                <div fxFlex="100" fxLayout="row wrap" *ngFor="let message of messagesList;" class="chat-list" >
+                    <span class="message-sender">{{ message.sender }}: &nbsp;</span>{{ message.message }}
+                </div>
+            </div>
+            
+            
+            <div [formGroup]="theForm" fxFlex="100" fxLayout="row wrap">
+                <mat-form-field fxFlex="100">
+                    <input #sender_field type="text" matInput placeholder="Sender" formControlName="sender">
+                    <mat-error *ngIf="theForm.controls.sender.hasError('required') && theForm.controls.sender.touched">
+                        Sender Name is required.
+                    </mat-error>
+                </mat-form-field>
+    
+                <mat-form-field fxFlex="100">
+                    <input #message_field type="text" matInput placeholder="Message" formControlName="message" 
+                    (keyup.enter)="sendMessage()">
+                    <mat-error *ngIf="theForm.controls.message.hasError('required') && theForm.controls.message.touched">
+                        Message is required.
+                    </mat-error>
+                </mat-form-field>
+
+                <button mat-raised-button color="primary" 
+                    (click)="sendMessage()" style="margin-top: 10px;" 
+                    [disabled]="theForm.invalid">
+                    Send Message
+                </button>
+            </div>
+        </div>
+        
+    </div>
+</div>
