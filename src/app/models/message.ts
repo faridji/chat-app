@@ -1,4 +1,5 @@
 export interface Message {
-    id: string,
-    body: string
+    type: 'audio' | 'text',
+    sender: string,
+    message: any
 }

@@ -8,15 +8,22 @@ export class ChatService
 {
     constructor(private socket: Socket) {}
 
-    sendMessage(message: any)
+    sendMessage(message: any, type: string)
     {
-        this.socket.emit('chat', message);
+        let payload = {
+            type: type,
+            sender: message.sender,
+            message: message.message
+        }
+
+        this.socket.emit('chat', payload);
     }
 
     getMessages(): Observable<any>
     {
         return Observable.create( (observer) => {
-            this.socket.on('chat', (chat) => {
+            this.socket.on('chat', (chat) => 
+            {
                 observer.next(chat);
             })
         })

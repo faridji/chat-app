@@ -5,13 +5,17 @@
     <div fxFlex="100" fxLayout="row wrap" fxLayoutAlign="space-around center" >
         
         <div fxFlex="50" fxLayout="row wrap" class="message-container">
-
             <div class="chat" fxFlex="100" fxLayout="row wrap">
-                <div fxFlex="100" fxLayout="row wrap" *ngFor="let message of messagesList;" class="chat-list" >
-                    <span class="message-sender">{{ message.sender }}: &nbsp;</span>{{ message.message }}
+                <div fxFlex="100" fxLayout="row wrap" *ngFor="let message of messagesList;">
+                    <div fxFlex="100" fxLayout="row wrap" class="chat-list" *ngIf="message.type === 'text'">
+                        <span class="message-sender">{{ message.sender }}: &nbsp;</span>{{ message.message }}
+                    </div>
+
+                    <div fxFlex="100" fxLayout="row wrap" class="chat-list" *ngIf="message.type === 'audio'">
+                        <audio [src]="message.message" controls></audio>
+                    </div>
                 </div>
             </div>
-            
             
             <div [formGroup]="theForm" fxFlex="100" fxLayout="row wrap">
                 <mat-form-field fxFlex="100">
@@ -21,16 +25,34 @@
                     </mat-error>
                 </mat-form-field>
     
-                <mat-form-field fxFlex="100">
-                    <input #message_field type="text" matInput placeholder="Message" formControlName="message" 
-                    (keyup.enter)="sendMessage()">
-                    <mat-error *ngIf="theForm.controls.message.hasError('required') && theForm.controls.message.touched">
-                        Message is required.
-                    </mat-error>
-                </mat-form-field>
+                <div fxFlex="100" fxLayout="row" fxLayoutGap="10px">
+                    <mat-form-field [fxFlex]="flex">
+                        <input #message_field type="text" matInput placeholder="Message" formControlName="message" 
+                        (keyup.enter)="sendMessage('text')">
+                        <mat-error *ngIf="theForm.controls.message.hasError('required') && theForm.controls.message.touched">
+                            Message is required.
+                        </mat-error>
+                    </mat-form-field>
+
+                    <div fxFlex fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="20px" *ngIf="isRecordingStarted">
+                        <button mat-icon-button (click)="onCancelRecording()" color="warn">
+                            <mat-icon style="font-size: 30px;">cancel</mat-icon>
+                        </button>
+
+                        <span class="recording-time">{{ timerValue }}</span>
+
+                        <button mat-icon-button (click)="onSendRecordedMessage()" style="color: green;">
+                            <mat-icon style="font-size: 30px;">check_circle</mat-icon>
+                        </button>
+                    </div>
+
+                    <button fxFlex fxLayoutAlign="end" mat-icon-button (click)="onStartRecording()" *ngIf="!isRecordingStarted">
+                        <mat-icon>mic</mat-icon>
+                    </button>
+                </div>
 
                 <button mat-raised-button color="primary" 
-                    (click)="sendMessage()" style="margin-top: 10px;" 
+                    (click)="sendMessage('text')" style="margin-top: 10px;" 
                     [disabled]="theForm.invalid">
                     Send Message
                 </button>
