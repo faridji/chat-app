@@ -8,10 +8,11 @@
             <div class="chat" fxFlex="100" fxLayout="row wrap">
                 <div fxFlex="100" fxLayout="row wrap" *ngFor="let message of messagesList;">
                     <div fxFlex="100" fxLayout="row wrap" class="chat-list" *ngIf="message.type === 'text'">
-                        <span class="message-sender">{{ message.sender }}: &nbsp;</span>{{ message.message }}
+                        <span class="message-sender">{{ message.sender }}: &nbsp;&nbsp;</span>{{ message.message }}
                     </div>
 
-                    <div fxFlex="100" fxLayout="row wrap" class="chat-list" *ngIf="message.type === 'audio'">
+                    <div fxFlex="100" fxLayout="row wrap" fxLayoutAlign="start center" class="chat-list" *ngIf="message.type === 'audio'">
+                        <span class="message-sender">{{ message.sender }}: &nbsp;&nbsp;</span>
                         <audio [src]="message.message" controls></audio>
                     </div>
                 </div>

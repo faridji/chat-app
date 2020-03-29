@@ -1,8 +1,9 @@
-import { Component, OnInit, ViewChild, ElementRef, Renderer2, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, OnDestroy } from '@angular/core';
 import { ChatService } from './chat-service';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { interval, Subscription } from 'rxjs';
 import { Message } from './models/message';
+import { DomSanitizer } from '@angular/platform-browser';
 
 
 @Component({
@@ -10,11 +11,8 @@ import { Message } from './models/message';
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })
-export class AppComponent implements OnInit
+export class AppComponent implements OnInit, OnDestroy
 {
-  @ViewChild('chat_list') chatList: ElementRef<HTMLAudioElement>;
-
-
   title = 'chat-app';
 
   mediaRecorder: MediaRecorder;
@@ -31,8 +29,7 @@ export class AppComponent implements OnInit
 
   constructor(private chatService: ChatService, 
               private _fb: FormBuilder,
-              private renderer: Renderer2,
-              private cdr: ChangeDetectorRef) 
+              private sanitizer: DomSanitizer,) 
   {
     this.messagesList = [];
     this.isRecordingStarted = false;
@@ -53,22 +50,19 @@ export class AppComponent implements OnInit
     {
       if (message.type === 'audio')
       { 
-        // const audioContainer: HTMLDivElement = this.renderer.createElement('div');
-
-        // const audioBlob = new Blob(message.message, { type: 'audio/mpeg-3'});
-        // const audioElement: HTMLAudioElement = this.renderer.createElement('audio');
-
-        // audioElement.controls = true;
-        // audioElement.src = URL.createObjectURL(audioBlob);
-      
-        // this.renderer.appendChild(audioContainer, audioElement);
-        // this.renderer.appendChild(this.chatList.nativeElement, audioContainer);
+        const audioBlob = new Blob(message.message, { type: 'audio/mpeg-3'});
+        message.message = this.sanitizer.bypassSecurityTrustUrl(URL.createObjectURL(audioBlob));
       }
 
       this.messagesList.push(message);
     }, (error: any) => {
       console.error('error occured', error);
     });
+  }
+
+  ngOnDestroy()
+  {
+    this.subScription.unsubscribe();
   }
   
   sendMessage(type: Message['type'])
@@ -97,7 +91,6 @@ export class AppComponent implements OnInit
 
   onSendRecordedMessage()
   {
-
     this.onCancelRecording();
     this.mediaRecorder.addEventListener('stop', () => 
     {
@@ -125,7 +118,6 @@ export class AppComponent implements OnInit
 
         this.mediaRecorder.addEventListener("dataavailable", event => 
         {
-          console.log('Data =', event['data']);
           this.audioChunks.push(event['data']);
         });
       });
